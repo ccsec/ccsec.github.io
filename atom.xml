@@ -36,21 +36,4 @@
     
   </entry>
   
-  <entry>
-    <title><![CDATA[My new post]]></title>
-    <link href="http://yoursite.com/2015/10/25/My-new-post/"/>
-    <id>http://yoursite.com/2015/10/25/My-new-post/</id>
-    <published>2015-10-25T11:47:27.000Z</published>
-    <updated>2015-10-25T11:49:07.242Z</updated>
-    <content type="html"><![CDATA[<p>test</p>
-<h2 id="Title">Title</h2><p>for new post test</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>test</p>
-<h2 id="Title">Title</h2><p>for new post test</p>
-]]>
-    </summary>
-    
-  </entry>
-  
 </feed>
