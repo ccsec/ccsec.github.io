@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-25T11:18:30.322Z</updated>
+  <updated>2015-10-25T13:08:38.329Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,22 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[SQL injection]]></title>
+    <link href="http://yoursite.com/2015/10/25/SQL-injection/"/>
+    <id>http://yoursite.com/2015/10/25/SQL-injection/</id>
+    <published>2015-10-25T13:08:03.000Z</published>
+    <updated>2015-10-25T13:08:38.329Z</updated>
+    <content type="html"><![CDATA[<h2 id="Overview">Overview</h2><p>SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="Overview">Overview</h2><p>SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢]]>
+    </summary>
+    
+      <category term="sql injection" scheme="http://yoursite.com/tags/sql-injection/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hello World]]></title>
