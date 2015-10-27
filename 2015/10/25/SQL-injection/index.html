@@ -5,16 +5,22 @@
   
   <title>SQL injection | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="OverviewSQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。">
+  <meta name="description" content="概述SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。
+威胁模型
+SQL注">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SQL injection">
 <meta property="og:url" content="http://yoursite.com/2015/10/25/SQL-injection/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="OverviewSQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。">
-<meta property="og:updated_time" content="2015-10-25T13:08:38.329Z">
+<meta property="og:description" content="概述SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。
+威胁模型
+SQL注">
+<meta property="og:updated_time" content="2015-10-27T14:40:32.424Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SQL injection">
-<meta name="twitter:description" content="OverviewSQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。">
+<meta name="twitter:description" content="概述SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。
+威胁模型
+SQL注">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -82,12 +88,44 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Overview">Overview</h2><p>SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。</p>
-
+        <h2 id="概述">概述</h2><p>SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。</p>
+<h2 id="威胁模型">威胁模型</h2><ul>
+<li>SQL注入攻击允许攻击者欺骗身份，篡改已经存在的数据，造成比如交易无效的或者改变结余的不可否认的问题。还允许完整的披露系统上的所有数据，毁坏数据或者要不然就让它不可用，并且成为数据库服务器的管理员。</li>
+<li>PHP和ASP应用一些老的函数接口使用得很普遍，使得其SQL注入非常常见。由于编程接口的本质使用合理，J2EE和ASP.NET应用程序不太有可能被SQL注入利用的。</li>
+<li>SQL注入攻击的严重程度是受到攻击者的技能和想象力限制的，在适当程度上采取纵深防御的措施，比如说以低权限连接数据库服务器等，总的来说，把SQL注入的严重程度认为有很大影响。</li>
+</ul>
+<h2 id="相关的安全文章">相关的安全文章</h2><p><strong>如何避免SQL注入漏洞</strong></p>
+<p><a href="https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet" title="SQL Injection Prevention Cheat Sheet" target="_blank" rel="external">SQL Injection Prevention Cheat Sheet.</a></p>
+<p><a href="https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet" title="Query Parameterization Cheat Sheet" target="_blank" rel="external">Query Parameterization Cheat Sheet</a></p>
+<p><a href="https://www.owasp.org/index.php/Guide_to_SQL_Injection" title="Avoid SQL Injection" target="_blank" rel="external">Avoid SQL Injection</a></p>
+<p><strong>如何审查SQL注入漏洞代码</strong></p>
+<p><a href="https://www.owasp.org/index.php/Reviewing_Code_for_SQL_Injection" title="Review Code for SQL Injection" target="_blank" rel="external">Review Code for SQL Injection</a></p>
+<p><strong>如何测试SQL注入漏洞</strong></p>
+<p><a href="https://www.owasp.org/index.php/Testing_for_SQL_Injection_(OTG-INPVAL-005" target="_blank" rel="external">Test for SQL Injection</a> “Test for SQL Injection”)</p>
+<h2 id="描述">描述</h2><p>SQL注入错误发生在：</p>
+<ol>
+<li>数据由来源不可信的地方进入程序。</li>
+<li>数据被用来动态的拼接SQL查询。</li>
+</ol>
+<p>主要的后果有：</p>
+<ul>
+<li><strong>机密性：</strong> 由于SQL数据库一般保存了敏感数据，SQL注入漏洞使得其失去机密性是很常见的问题。</li>
+<li><strong>认证：</strong> 如果比较低级SQL命令被用来检查名字和密码，它将有可能通过一个以前不知道密码的另一个用户连接到系统。</li>
+<li><strong>授权：</strong> 如果授权信息是保存在SQL数据库里面的，那么它可能通过成功利用一个SQL注入漏洞修改这个授权信息。</li>
+<li><strong>完整性：</strong> 就像它可能读取到敏感信息一样，它也可能通过一次SQL注入攻击修改或者删除这个信息。</li>
+</ul>
+<h2 id="危险因素">危险因素</h2><p>可能影响的平台：</p>
+<ul>
+<li>语言： SQL</li>
+<li>平台： 任意（需要和数据库交互）</li>
+</ul>
+<p>SQL注入已经成为数据库驱动的web网站的常见问题。这个问题很容易被检测到，而且很容易利用，正是因为如此，任意网站或者最小用户群体的软件包都很有可能受到这种攻击尝试。</p>
+<p>从本质上来讲，攻击是通过插入元字符到输入的数据中，然后将原来不存在的SQL命令放置在控制面板，这个缺陷实质上取决于SQL使得数据层和逻辑业务层没有真正的区别。</p>
+<h2 id="例子">例子</h2>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/10/25/SQL-injection/" data-id="cig6j7lyk0000gkqw6dy9eysg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/10/25/SQL-injection/" data-id="cig9hlhca0000wkqwmc300puc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql-injection/">sql injection</a></li></ul>
