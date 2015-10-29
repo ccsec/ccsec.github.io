@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-27T14:40:32.424Z</updated>
+  <updated>2015-10-29T15:32:00.791Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://yoursite.com/2015/10/25/SQL-injection/"/>
     <id>http://yoursite.com/2015/10/25/SQL-injection/</id>
     <published>2015-10-25T13:08:03.000Z</published>
-    <updated>2015-10-27T14:40:32.424Z</updated>
+    <updated>2015-10-29T15:32:00.791Z</updated>
     <content type="html"><![CDATA[<h2 id="概述">概述</h2><p>SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。</p>
 <h2 id="威胁模型">威胁模型</h2><ul>
 <li>SQL注入攻击允许攻击者欺骗身份，篡改已经存在的数据，造成比如交易无效的或者改变结余的不可否认的问题。还允许完整的披露系统上的所有数据，毁坏数据或者要不然就让它不可用，并且成为数据库服务器的管理员。</li>
@@ -53,7 +53,61 @@
 </ul>
 <p>SQL注入已经成为数据库驱动的web网站的常见问题。这个问题很容易被检测到，而且很容易利用，正是因为如此，任意网站或者最小用户群体的软件包都很有可能受到这种攻击尝试。</p>
 <p>从本质上来讲，攻击是通过插入元字符到输入的数据中，然后将原来不存在的SQL命令放置在控制面板，这个缺陷实质上取决于SQL使得数据层和逻辑业务层没有真正的区别。</p>
-<h2 id="例子">例子</h2>]]></content>
+<h2 id="例子">例子</h2><p><strong>实例1</strong></p>
+<p>SQL语句：</p>
+<pre><code><span class="operator"><span class="keyword">select</span> <span class="keyword">id</span>, firstname, lastname <span class="keyword">from</span> <span class="keyword">authors</span></span>
+</code></pre><p>如果有人输入：</p>
+<pre><code><span class="attribute">Firstname</span>: <span class="string">evil'ex</span>
+<span class="attribute">Lastname</span>: <span class="string">Nevman</span>
+</code></pre><p>查询字符串就变成：</p>
+<pre><code><span class="operator"><span class="keyword">select</span> <span class="keyword">id</span>, firstname, lastname <span class="keyword">from</span> <span class="keyword">authors</span> <span class="keyword">where</span> forename = <span class="string">'evil'</span>ex<span class="string">' and surname = '</span>newman<span class="string">'</span></span>
+</code></pre><p>数据库将尝试如此运行：</p>
+<pre><code>Incorrect syntax near il' as the database tried to<span class="instruction"> execute </span>evil.
+</code></pre><p>一个用Java编码的SQL语句安全版本如下：</p>
+<pre><code><span class="constant">String firstname</span> = req.getParameter(<span class="string">"firstname"</span>);
+<span class="constant">String lastname</span> = req.getParameter(<span class="string">"lastname"</span>);
+<span class="comment">// <span class="doctag">FIXME:</span> do your own validation to detect attacks</span>
+<span class="constant">String query</span> = <span class="string">"SELECT id, firstname, lastname FROM authors WHERE forename = ? and surname = ?"</span>;
+<span class="constant">PreparedStatement pstmt</span> = connection.prepareStatement( query );
+pstmt.setString( <span class="number">1</span>, firstname );
+pstmt.setString( <span class="number">2</span>, lastname );
+try
+{
+<span class="constant">    ResultSet results</span> = pstmt.execute( );
+}
+</code></pre><p><strong>实例2</strong></p>
+<p>下面是c#的代码的动态构造和执行的SQL语句，来查询匹配特殊名字的项。这个查询仅展示那些和当前认证用户用户名相匹配的项目。</p>
+<pre><code>    ...
+<span class="built_in">string</span> userName = ctx.getAuthenticatedUserName();
+<span class="built_in">string</span> query = <span class="string">"SELECT * FROM items WHERE owner = "</span><span class="comment">'" </span>
+                + userName + <span class="string">"' AND itemname = '"</span>  
+                + ItemName.<span class="keyword">Text</span> + <span class="string">"'"</span>;
+sda = <span class="keyword">new</span> SqlDataAdapter(query, conn);
+DataTable dt = <span class="keyword">new</span> DataTable();
+sda.Fill(dt);
+...
+</code></pre><p>这个查询代码目的是执行如下：</p>
+<pre><code><span class="built_in">SELECT</span> * <span class="keyword">FROM</span> <span class="built_in">items</span>
+WHERE <span class="built_in">owner</span> = 
+<span class="built_in">AND</span> itemname = ;
+</code></pre><p>然而，由于这个查询是由一连串的基础字符串和用户输入的字符串动态构造的，所以这个查询仅仅在项目名次并不包含单引号字符的时候才会表现正确。假如一个攻击者输入<code>name&#39; or &#39;a&#39;=&#39;a</code>作为用户名，那么查询就会变成如下：</p>
+<pre><code><span class="operator"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> items
+<span class="keyword">WHERE</span> owner = <span class="string">'wiley'</span>
+<span class="keyword">AND</span> itemname = <span class="string">'name'</span> <span class="keyword">OR</span> <span class="string">'a'</span>=<span class="string">'a'</span>;</span>
+</code></pre><p>添加的<code>OR &#39;a&#39;=&#39;a&#39;</code>正好造成那一列用于是真值，所以这个查询变得逻辑上等同于更简单的查询：</p>
+<pre><code><span class="built_in">SELECT</span> * <span class="keyword">FROM</span> <span class="built_in">items</span>;
+</code></pre><p>查询的简化使得攻击者绕过查询仅返回被认证的用户所拥有的条目的限制；现在查询返回所有的存储在项目表里的条目，忽视他们特殊的所有者。</p>
+<p><strong>实例3</strong></p>
+<p>这实例检查不同的恶意值传给实例1中被构造和执行的查询的效果。假如黑客攻击者输入<code>name&#39;);DELETE FROM items;--</code>作为项目名，那么查询就变成如下两个查询了：</p>
+<pre><code><span class="operator"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> items 
+<span class="keyword">WHERE</span> owner = <span class="string">'hacker'</span>
+<span class="keyword">AND</span> itemname = <span class="string">'name'</span>;</span>
+
+<span class="operator"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> items;</span>
+
+<span class="comment">--'</span>
+</code></pre><p>很多数据库服务器，包括微软的SQL Server 2000,允许多条SQL语句通过分号分隔后被一次执行。</p>
+]]></content>
     <summary type="html">
     <![CDATA[<h2 id="概述">概述</h2><p>SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定]]>
     </summary>
