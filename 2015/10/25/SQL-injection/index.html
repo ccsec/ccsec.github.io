@@ -15,7 +15,7 @@ SQL注">
 <meta property="og:description" content="概述SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。
 威胁模型
 SQL注">
-<meta property="og:updated_time" content="2015-10-29T15:32:00.791Z">
+<meta property="og:updated_time" content="2015-10-31T06:34:29.790Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SQL injection">
 <meta name="twitter:description" content="概述SQL 注入攻击是由来自客户端对应用程序插入或者注入SQL查询组成的。一次成功的SQL注入攻击能够从数据库读取到敏感数据，修改数据库数据（插入/更新/删除），在数据库上执行管理员操作（比如关闭数据库管理系统），恢复数据库管理系统上的给定文件，并在某些条件下向操作系统发出命令。SQL注入攻击以注入攻击的一种，其SQL命令被注入到数据层为了使预定义的SQL命令执行产生预期效果。
@@ -174,12 +174,58 @@ WHERE <span class="built_in">owner</span> =
 <span class="operator"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> items;</span>
 
 <span class="comment">--'</span>
-</code></pre><p>很多数据库服务器，包括微软的SQL Server 2000,允许多条SQL语句通过分号分隔后被一次执行。</p>
+</code></pre><p>很多数据库服务器，包括微软的SQL Server 2000,允许多条SQL语句通过分号分隔后被一次执行。虽然在Oracle和其他不允许批量执行由分号分隔的语句的数据库服务器上批量执行的攻击字符串会导致错误，但是在一些允许批量执行命令的服务器上，这种类型的攻击允许攻击者对数据库执行任意命令。注意到成对的连字符（–），在大多数数据库服务器中被声明作为注释，而且不被执行的。在这种情况下，注释字符的作用是从被修改过的查询中除去最后一个单引号。在不支持这种注释方式的数据库中，一般的攻击仍然能够有效的使用一个类似实例1中展示的技巧。假如一个攻击者输入字符串<code>name&#39;); DELETE FROM items; SELECT * FROM items WHERE &#39;a&#39;=&#39;a</code>,下面三个有效的语句将会被创建：</p>
+<pre><code><span class="operator"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> items 
+<span class="keyword">WHERE</span> owner = <span class="string">'hacker'</span>
+<span class="keyword">AND</span> itemname = <span class="string">'name'</span>;</span>
+
+<span class="operator"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> items;</span>
+
+<span class="operator"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> items <span class="keyword">WHERE</span> <span class="string">'a'</span>=<span class="string">'a'</span>;</span>
+</code></pre><p>一个防止SQL注入攻击的传统方法是把他们当作一个输入校验的问题来处理，要么接收安全值白名单中的唯一字符，要么识别并避开那些潜在的恶意数据黑名单。白名单可以是强制执行严格的输入检查规则的非常有效的手段，但是参数化的SQL语句需要更好的维护成本就能提供更安全的保障。黑名单策略几乎总是充满了漏洞，使得其无法有效的防止SQL注入攻击，比如说，攻击者能够：</p>
+<ul>
+<li>黑名单未包含的目标</li>
+<li>寻找方法去绕过某些转义元字符的限制</li>
+<li>使用存储过程来隐藏注入的元字符</li>
+</ul>
+<p>在输入给SQL查询的时候手工转移字符是有帮助的，但是它不会让你的应用免遭SQL注入攻击。</p>
+<p>另一个普遍建议的处理SQL注入攻击的方案是使用存储过程，尽管存储过程防止了一些类型的SQL注入攻击，他们不能防止其他很多类型。例如，下面的PL/SQL程序跟第一个实例容易受到一样的SQL注入攻击。</p>
+<pre><code><span class="function"><span class="keyword">procedure</span> <span class="title">get_item</span> <span class="params">(
+    itm_cv <span class="keyword">IN</span> <span class="keyword">OUT</span> ItmCurTyp,
+    usr <span class="keyword">in</span> varchar2,
+    itm <span class="keyword">in</span> varchar2)</span>
+<span class="title">is</span>
+    <span class="title">open</span> <span class="title">itm_cv</span> <span class="title">for</span> ' <span class="title">SELECT</span> * <span class="title">FROM</span> <span class="title">items</span> <span class="title">WHERE</span> ' ||
+            '<span class="title">owner</span> = '''|| <span class="title">usr</span> || 
+            ' <span class="title">AND</span> <span class="title">itemname</span> = ''' || <span class="title">itm</span> || '''';</span>
+<span class="keyword">end</span> get_item;
+</code></pre><p>存储过程通过限制传递给语句的参数类型，有助于防止SQL注入攻击。然而，有很多限制方法的局限性和很多有趣的语句仍然能够被传递到存储过程。再次强调，存储过程可以防止一些攻击，但是他们不能完全的使你的应用系统抵御SQL注入攻击。</p>
+<h2 id="相关的威胁因素">相关的威胁因素</h2><ul>
+<li>分类：命令执行</li>
+<li>注入问题</li>
+</ul>
+<h2 id="相关的攻击">相关的攻击</h2><ul>
+<li>注入攻击</li>
+<li>SQL盲注</li>
+<li>代码注入</li>
+<li>Double Encoding</li>
+<li>Interpreter_Injection#ORM_Injection</li>
+</ul>
+<h2 id="相关的漏洞">相关的漏洞</h2><ul>
+<li>Category:Input Validation Vulnerability</li>
+</ul>
+<h2 id="相关的控件">相关的控件</h2><ul>
+<li>查询参数</li>
+<li>输入校验</li>
+</ul>
+<h2 id="引用">引用</h2><ul>
+<li><a href="https://www.owasp.org/index.php/SQL_Injection" target="_blank" rel="external">SQL_Injection</a></li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/10/25/SQL-injection/" data-id="cigce4aa20000v4qw34e5sufc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/10/25/SQL-injection/" data-id="cigeps2ah000034qwy20vbbmo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql-injection/">sql injection</a></li></ul>
