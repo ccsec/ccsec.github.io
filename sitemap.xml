@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2015/11/01/Cross-site-Scripting/</loc>
+    <lastmod>2015-11-01T14:17:32.603Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2015/10/25/SQL-injection/</loc>
     <lastmod>2015-10-31T06:34:29.790Z</lastmod>
   </url>

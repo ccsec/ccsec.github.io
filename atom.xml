@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-31T06:34:29.790Z</updated>
+  <updated>2015-11-01T14:17:32.603Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,51 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Cross-site Scripting]]></title>
+    <link href="http://yoursite.com/2015/11/01/Cross-site-Scripting/"/>
+    <id>http://yoursite.com/2015/11/01/Cross-site-Scripting/</id>
+    <published>2015-11-01T09:22:01.000Z</published>
+    <updated>2015-11-01T14:17:32.603Z</updated>
+    <content type="html"><![CDATA[<h2 id="概述">概述</h2><p>跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。</p>
+<p>攻击者可以利用XSS发送恶意脚本给信任的人。终端用户的浏览器没有办法了解到脚本是否该被信任，并且将会执行脚本。因为它认为脚本来自于可信的源，恶意的脚本能够读取到任意cookies,session tokens,或者浏览器和被网站使用过的保留的敏感信息。这些脚本甚至能够重写HTML页面的内容。更多关于不同类型的XSS漏洞详情，看这里：<a href="https://www.owasp.org/index.php/Types_of_Cross-Site_Scripting" target="_blank" rel="external">Types of Cross-Site Scripting</a></p>
+<h2 id="相关的安全文章">相关的安全文章</h2><p><strong>如何避免跨站脚本漏洞</strong></p>
+<p><a href="https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting" target="_blank" rel="external">XSS (Cross Site Scripting) Prevention Cheat Sheet</a>_Prevention_Cheat_Sheet)</p>
+<p><a href="https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet" target="_blank" rel="external">DOM based XSS Prevention Cheat Sheet</a></p>
+<p><a href="https://www.owasp.org/index.php/Phishing" target="_blank" rel="external">Phishing</a></p>
+<p><a href="https://www.owasp.org/index.php/Data_Validation" target="_blank" rel="external">Data Validation</a></p>
+<p><strong>如何审查代码的跨站脚本漏洞</strong></p>
+<p><a href="https://www.owasp.org/index.php/Reviewing_Code_for_Cross-site_scripting" target="_blank" rel="external">Reviewing Code for Cross-site scripting</a></p>
+<p><strong>如何测试跨站脚本漏洞</strong></p>
+<p><a href="https://www.owasp.org/index.php/Testing_for_Reflected_Cross_site_scripting_(OWASP-DV-001" target="_blank" rel="external">Testing_for_Reflected_Cross_site<em>scripting</em>(OWASP-DV-001)</a>)</p>
+<p><a href="https://www.owasp.org/index.php/Testing_for_Stored_Cross_site_scripting_(OWASP-DV-002" target="_blank" rel="external">Testing_for_Stored_Cross_site<em>scripting</em>(OWASP-DV-002)</a>)</p>
+<p><a href="https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OWASP-DV-003" target="_blank" rel="external">Testing_for_DOM-based_Cross_site<em>scripting</em>(OWASP-DV-003)</a>)</p>
+<h2 id="描述">描述</h2><p>跨站脚本攻击（XSS）攻击发生在：</p>
+<ol>
+<li>数据通过不信任的源输入到应用程序，在web请求中更频繁。</li>
+<li>数据包含动态的内容被送到web用户，没有经过恶意内容的校验。</li>
+</ol>
+<p>恶意的内容发送到浏览器经常包含一段js，也可能包含HTML，Flash，或任何浏览器可能执行的代码。大量基于XSS的攻击都是无限制的，但是他们通常包括传递隐私数据，像cookies或者其他session信息，对于攻击者来说，将受害者重定向到被攻击者控制的页面，或者存在漏洞的网站的幌子下在用户机器上执行恶意的操作</p>
+<p><strong>存储和反射XSS攻击</strong></p>
+<p>XSS攻击大致是能被分为两类：存储和反射。还有个第三类，没前两类那么有名的XSS攻击，被叫做DOM XSS。</p>
+<p><strong>存储XSS攻击</strong></p>
+<p>存储攻击是指注入的脚本被永久的存储在目标服务器，如数据库，消息论坛，访客日志，评论区域等。然后当受害者请求被存储的信息时候，获取到服务器的恶意脚本。存储XSS有时候也指持久或者Ⅰ类XSS。</p>
+<p><strong>反射XSS攻击</strong></p>
+<p>反射攻击是那些注入脚本被web服务器反弹，比如在错误消息，搜索结果，或者任何包含一些或所有输入作为部分请求被发送到服务器而返回。反射攻击通过其他路由传递给受害者，比如在一封邮件信息，或者一些其他的web网站。当一个用户被欺骗去点击一个恶意的链接，提交一个特殊构造的表单，或者甚至浏览一个恶意的网站，被注入的代码就传递到了有漏洞的网站，反射攻击返回到用户的浏览器。浏览器然后执行代码，因为它来自于一个被信任的服务器。反射XSS有些时候是值非持久或者Ⅱ类XSS。</p>
+<p><strong>其他类的XSS漏洞</strong></p>
+<p>除了存储和反射XSS，另外一类XSS，DOM XSS在2005年被Amit Klein提出。OWASP推荐在OWASP文章里描述的XSS分类：<a href="https://www.owasp.org/index.php/Types_of_Cross-Site_Scripting" target="_blank" rel="external"> Types of Cross-Site Scripting</a>,覆盖了所有的XSS条目，并把他们组织成存储与反射XSS和服务端与客户端XSS，其中DOM XSS是客户端XSS的子集。</p>
+<p><strong>XSS攻击后果</strong></p>
+<p>XSS攻击后果是相同的无论是否是存储的还是反射的（或者基于DOM的）。差别在于载荷是怎么到达服务器的。不要错误的认为“只读”或者“brochureware”网站是不会受到严重的反射XSS攻击的。XSS能引起多种范围从一个烦恼程度到账户妥协的问题给终端用户。最严重的XSS攻击设计用户的会话cookie信息的披露，允许攻击者戒指用户会话并接管账户。其他有害的攻击包括披露终端用户文件，安装木马程序，重定向用户到一些其他页面和站点或者修改展示的内容。XSS漏洞允许攻击者修改新闻稿或新闻项目，这可能影响公司股票价格或使消费者丢失信心。在医药网站的XSS漏洞可能允许攻击者修改药量信息导致过计量。关于这类攻击详细信息，请参见<a href="https://www.owasp.org/index.php/Content_Spoofing" target="_blank" rel="external">Content_Spoofing</a></p>
+<p><strong>如何保护你自己</strong></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="概述">概述</h2><p>跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入]]>
+    </summary>
+    
+      <category term="XSS" scheme="http://yoursite.com/tags/XSS/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[SQL injection]]></title>
