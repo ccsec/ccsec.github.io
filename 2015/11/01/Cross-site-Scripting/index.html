@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
 攻击者可以利用XSS发送恶意脚本给信任的人。终端用户的浏览器没有办法了解到脚本是否该被信任，并且将会执行脚本。因">
-<meta property="og:updated_time" content="2015-11-02T13:51:47.925Z">
+<meta property="og:updated_time" content="2015-11-02T15:17:12.690Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cross-site Scripting">
 <meta name="twitter:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
@@ -116,13 +116,33 @@
 <p>XSS攻击后果是相同的无论是否是存储的还是反射的（或者基于DOM的）。差别在于载荷是怎么到达服务器的。不要错误的认为“只读”或者“brochureware”网站是不会受到严重的反射XSS攻击的。XSS能引起多种范围从一个烦恼程度到账户妥协的问题给终端用户。最严重的XSS攻击设计用户的会话cookie信息的披露，允许攻击者戒指用户会话并接管账户。其他有害的攻击包括披露终端用户文件，安装木马程序，重定向用户到一些其他页面和站点或者修改展示的内容。XSS漏洞允许攻击者修改新闻稿或新闻项目，这可能影响公司股票价格或使消费者丢失信心。在医药网站的XSS漏洞可能允许攻击者修改药量信息导致过计量。关于这类攻击详细信息，请参见<a href="https://www.owasp.org/index.php/Content_Spoofing" target="_blank" rel="external">Content_Spoofing</a></p>
 <p><strong>如何保护你自己</strong></p>
 <p>对XSS的主要防御在<a href="https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting" target="_blank" rel="external">OWASP XSS Prevention Cheat Sheet</a>_Prevention_Cheat_Sheet)里已经描述了。</p>
-<p>另外，你在所有支持HTTP TRACE的web服务器上关闭它是很重要的。攻击者能够通过javascript盗取cookie数据，尽管在客户端当<code>document.cookie</code>被禁用或不支持的时候。攻击在一个用户发表一段恶意脚本到论坛的时候被挂起，当另一个用户点击这个连接，一个从服务器收集用户cookie信息的异步HTTP 跟踪调用就被触发了，然后将它发送到另一个恶意服务器去收集cookie信息，因此攻击者能够进行session劫持攻击。这个通过在web服务器上移除HTTP TRACE很容易减少攻击。</p>
-<p>OWASP的ESAPI项目已经产生了一套多种语言的可重复使用的安全组件，包括校验和转义程序以防止参数被篡改和XSS注入攻击。此外，OWASP的WebGoat培训项目应用有跨站脚本和数据编码的课程。</p>
+<p>另外，你在所有支持HTTP TRACE的web服务器上关闭它是很重要的。攻击者能够通过javascript盗取cookie数据，尽管在客户端当 <figure class="highlight"><figcaption><span>被禁用或不支持的时候。攻击在一个用户发表一段恶意脚本到论坛的时候被挂起，当另一个用户点击这个连接，一个从服务器收集用户cookie信息的异步HTTP 跟踪调用就被触发了，然后将它发送到另一个恶意服务器去收集cookie信息，因此攻击者能够进行session劫持攻击。这个通过在web服务器上移除HTTP TRACE很容易减少攻击。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;OWASP&#30340;ESAPI&#39033;&#30446;&#24050;&#32463;&#20135;&#29983;&#20102;&#19968;&#22871;&#22810;&#31181;&#35821;&#35328;&#30340;&#21487;&#37325;&#22797;&#20351;&#29992;&#30340;&#23433;&#20840;&#32452;&#20214;&#65292;&#21253;&#25324;&#26657;&#39564;&#21644;&#36716;&#20041;&#31243;&#24207;&#20197;&#38450;&#27490;&#21442;&#25968;&#34987;&#31713;&#25913;&#21644;XSS&#27880;&#20837;&#25915;&#20987;&#12290;&#27492;&#22806;&#65292;OWASP&#30340;WebGoat&#22521;&#35757;&#39033;&#30446;&#24212;&#29992;&#26377;&#36328;&#31449;&#33050;&#26412;&#21644;&#25968;&#25454;&#32534;&#30721;&#30340;&#35838;&#31243;&#12290;&#10;&#10;**XSS&#35821;&#27861;**&#10;&#10;**XSS&#20351;&#29992;script&#23646;&#24615;**&#10;&#10;XSS&#25915;&#20987;&#21487;&#33021;&#19981;&#20351;&#29992; ```&#60;script&#62;&#60;/script&#62;``` &#26631;&#31614;&#36827;&#34892;&#12290;&#20854;&#20182;&#26631;&#31614;&#20063;&#21487;&#20197;&#20570;&#30456;&#21516;&#30340;&#20107;&#24773;&#65292;&#27604;&#22914;&#65306;&#10;&#10;    &#60;body onload=alert(&#39;test1&#39;)&#62;&#10;&#10;&#25110;&#32773;&#20854;&#20182;&#23646;&#24615;&#20687;&#65306; ```onmouseover, onerror``` &#10;&#10;```onmouseover</span><br></pre></td></tr></table></figure></p>
+<pre><code>&lt;<span class="tag">b</span> onmouseover=<span class="function"><span class="title">alert</span><span class="params">(<span class="string">'Wufff!'</span>)</span></span>&gt;click me!&lt;/b&gt;
+</code></pre><p><code>onerror</code></p>
+<pre><code><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">"http://url.to.file.which/not.exist"</span> <span class="attribute">onerror</span>=<span class="value">alert(document.cookie);</span>&gt;</span>
+</code></pre><p><strong>XSS 使用通过URI协议编码过的脚本</strong></p>
+<p>如果我们需要对web应用过滤器隐藏攻击字符，可以编码字符串，比如说 <code>a=&amp;#X41</code> (UTF-8)和在IMG标签中使用：</p>
+<pre><code>&lt;IMG SRC=j&amp;<span class="id">#X41vascript</span>:<span class="function"><span class="title">alert</span><span class="params">(<span class="string">'test2'</span>)</span></span>&gt;
+</code></pre><p>更多不同的UTF-8编码方式给了我们更多的可能性。</p>
+<p><strong>XSS使用编码代码</strong></p>
+<p>我们可以用base64编码我们的脚本并放置在META标签内。这样我们可以完全摆脱 <code>alert()</code> 。更多关于该方法的信息在这里能找到<a href="https://tools.ietf.org/html/rfc2397" target="_blank" rel="external">RFC2397</a></p>
+<pre><code><span class="tag">&lt;<span class="title">META</span> <span class="attribute">HTTP-EQUIV</span>=<span class="value">"refresh"</span> <span class="attribute">CONTENT</span>=<span class="value">"0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg"</span>&gt;</span>
+</code></pre><p>这些和其他例子在OWASP的一本真正的XSS语法攻击百科全书 <a href="https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet" target="_blank" rel="external">XSS Filter Evasion Cheat Sheet</a>能被找到。</p>
+<h2 id="实例">实例</h2><p>跨站脚本攻击可能发生在任何允许恶意用户发送不受限制的材料到一个被信任的web网站供有效的用户使用。</p>
+<p>最常见的例子能在提供了基于web邮件列表样式功能的web网站的公告板被发现。</p>
+<p><strong>实例1</strong></p>
+<p>下面Jsp代码片段读取一个员工ID，eid，从HTTP请求到展示给用户。</p>
+<pre><code><span class="xml"></span><span class="vbscript">&lt;% <span class="built_in">String</span> eid = <span class="built_in">request</span>.getParameter(<span class="string">"eid"</span>); %&gt;</span><span class="xml"> 
+...
+Employee ID: </span><span class="vbscript">&lt;%= eid %&gt;</span><span class="xml"></span>
+</code></pre><p>如果eid仅包含标准的字母数字文本时，实例中的代码就操作正确的。如果eid有一个包含元字符或者源代码的值，然后代码就会被浏览器执行，正如他显示HTTP相应一样。</p>
+<p>最初这个可能不会出现太大的漏洞，毕竟，为什么会有人输入URL能导致恶意代码运行在他自己的电脑上？真正的危险在于攻击者会创建恶意的URL。然后使用电子邮件或社会工程学手段来引诱受害者访问URL链接。当受害者点击链接，他们不知不觉将恶意内容通过易受攻击的web应用程序反射到他们自己的电脑。这种利用易受攻击的web应用程序的这种机制被称作反射XSS。</p>
+<p><strong>实例2</strong></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigi0tekd000724qwxt72wuyh" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigi3bk3d00073gqw1a5rxalm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
