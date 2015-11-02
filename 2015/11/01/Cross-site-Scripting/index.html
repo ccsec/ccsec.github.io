@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
 攻击者可以利用XSS发送恶意脚本给信任的人。终端用户的浏览器没有办法了解到脚本是否该被信任，并且将会执行脚本。因">
-<meta property="og:updated_time" content="2015-11-01T14:17:32.603Z">
+<meta property="og:updated_time" content="2015-11-02T13:51:47.925Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cross-site Scripting">
 <meta name="twitter:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
@@ -115,11 +115,14 @@
 <p><strong>XSS攻击后果</strong></p>
 <p>XSS攻击后果是相同的无论是否是存储的还是反射的（或者基于DOM的）。差别在于载荷是怎么到达服务器的。不要错误的认为“只读”或者“brochureware”网站是不会受到严重的反射XSS攻击的。XSS能引起多种范围从一个烦恼程度到账户妥协的问题给终端用户。最严重的XSS攻击设计用户的会话cookie信息的披露，允许攻击者戒指用户会话并接管账户。其他有害的攻击包括披露终端用户文件，安装木马程序，重定向用户到一些其他页面和站点或者修改展示的内容。XSS漏洞允许攻击者修改新闻稿或新闻项目，这可能影响公司股票价格或使消费者丢失信心。在医药网站的XSS漏洞可能允许攻击者修改药量信息导致过计量。关于这类攻击详细信息，请参见<a href="https://www.owasp.org/index.php/Content_Spoofing" target="_blank" rel="external">Content_Spoofing</a></p>
 <p><strong>如何保护你自己</strong></p>
+<p>对XSS的主要防御在<a href="https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting" target="_blank" rel="external">OWASP XSS Prevention Cheat Sheet</a>_Prevention_Cheat_Sheet)里已经描述了。</p>
+<p>另外，你在所有支持HTTP TRACE的web服务器上关闭它是很重要的。攻击者能够通过javascript盗取cookie数据，尽管在客户端当<code>document.cookie</code>被禁用或不支持的时候。攻击在一个用户发表一段恶意脚本到论坛的时候被挂起，当另一个用户点击这个连接，一个从服务器收集用户cookie信息的异步HTTP 跟踪调用就被触发了，然后将它发送到另一个恶意服务器去收集cookie信息，因此攻击者能够进行session劫持攻击。这个通过在web服务器上移除HTTP TRACE很容易减少攻击。</p>
+<p>OWASP的ESAPI项目已经产生了一套多种语言的可重复使用的安全组件，包括校验和转义程序以防止参数被篡改和XSS注入攻击。此外，OWASP的WebGoat培训项目应用有跨站脚本和数据编码的课程。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigglr8ll0000asqwl4fpoxp8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigi0a7mh0007k4qw33va2e6v" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -129,6 +132,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2015/11/02/Blind-SQL-Injection/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Blind SQL Injection
+        
+      </div>
+    </a>
   
   
     <a href="/2015/10/25/SQL-injection/" id="article-nav-older" class="article-nav-link-wrap">
@@ -151,7 +163,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-injection/">sql injection</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blind-SQL-Injection/">Blind SQL Injection</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-injection/">sql injection</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -160,7 +172,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/sql-injection/" style="font-size: 10px;">sql injection</a>
+      <a href="/tags/Blind-SQL-Injection/" style="font-size: 10px;">Blind SQL Injection</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/sql-injection/" style="font-size: 10px;">sql injection</a>
     </div>
   </div>
 
@@ -169,7 +181,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -179,6 +191,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/11/02/Blind-SQL-Injection/">Blind SQL Injection</a>
+          </li>
         
           <li>
             <a href="/2015/11/01/Cross-site-Scripting/">Cross-site Scripting</a>
