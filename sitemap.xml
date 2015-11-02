@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2015/11/01/Cross-site-Scripting/</loc>
-    <lastmod>2015-11-02T13:51:47.925Z</lastmod>
+    <loc>http://yoursite.com/2015/11/02/Blind-SQL-Injection/</loc>
+    <lastmod>2015-11-02T13:55:31.773Z</lastmod>
   </url>
   
   <url>
-    <loc>http://yoursite.com/2015/11/02/Blind-SQL-Injection/</loc>
-    <lastmod>2015-11-02T13:31:52.590Z</lastmod>
+    <loc>http://yoursite.com/2015/11/01/Cross-site-Scripting/</loc>
+    <lastmod>2015-11-02T13:51:47.925Z</lastmod>
   </url>
   
   <url>
