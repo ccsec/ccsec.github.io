@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
 攻击者可以利用XSS发送恶意脚本给信任的人。终端用户的浏览器没有办法了解到脚本是否该被信任，并且将会执行脚本。因">
-<meta property="og:updated_time" content="2015-11-02T15:17:12.690Z">
+<meta property="og:updated_time" content="2015-11-02T15:19:14.934Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cross-site Scripting">
 <meta name="twitter:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
@@ -116,7 +116,11 @@
 <p>XSS攻击后果是相同的无论是否是存储的还是反射的（或者基于DOM的）。差别在于载荷是怎么到达服务器的。不要错误的认为“只读”或者“brochureware”网站是不会受到严重的反射XSS攻击的。XSS能引起多种范围从一个烦恼程度到账户妥协的问题给终端用户。最严重的XSS攻击设计用户的会话cookie信息的披露，允许攻击者戒指用户会话并接管账户。其他有害的攻击包括披露终端用户文件，安装木马程序，重定向用户到一些其他页面和站点或者修改展示的内容。XSS漏洞允许攻击者修改新闻稿或新闻项目，这可能影响公司股票价格或使消费者丢失信心。在医药网站的XSS漏洞可能允许攻击者修改药量信息导致过计量。关于这类攻击详细信息，请参见<a href="https://www.owasp.org/index.php/Content_Spoofing" target="_blank" rel="external">Content_Spoofing</a></p>
 <p><strong>如何保护你自己</strong></p>
 <p>对XSS的主要防御在<a href="https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting" target="_blank" rel="external">OWASP XSS Prevention Cheat Sheet</a>_Prevention_Cheat_Sheet)里已经描述了。</p>
-<p>另外，你在所有支持HTTP TRACE的web服务器上关闭它是很重要的。攻击者能够通过javascript盗取cookie数据，尽管在客户端当 <figure class="highlight"><figcaption><span>被禁用或不支持的时候。攻击在一个用户发表一段恶意脚本到论坛的时候被挂起，当另一个用户点击这个连接，一个从服务器收集用户cookie信息的异步HTTP 跟踪调用就被触发了，然后将它发送到另一个恶意服务器去收集cookie信息，因此攻击者能够进行session劫持攻击。这个通过在web服务器上移除HTTP TRACE很容易减少攻击。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;OWASP&#30340;ESAPI&#39033;&#30446;&#24050;&#32463;&#20135;&#29983;&#20102;&#19968;&#22871;&#22810;&#31181;&#35821;&#35328;&#30340;&#21487;&#37325;&#22797;&#20351;&#29992;&#30340;&#23433;&#20840;&#32452;&#20214;&#65292;&#21253;&#25324;&#26657;&#39564;&#21644;&#36716;&#20041;&#31243;&#24207;&#20197;&#38450;&#27490;&#21442;&#25968;&#34987;&#31713;&#25913;&#21644;XSS&#27880;&#20837;&#25915;&#20987;&#12290;&#27492;&#22806;&#65292;OWASP&#30340;WebGoat&#22521;&#35757;&#39033;&#30446;&#24212;&#29992;&#26377;&#36328;&#31449;&#33050;&#26412;&#21644;&#25968;&#25454;&#32534;&#30721;&#30340;&#35838;&#31243;&#12290;&#10;&#10;**XSS&#35821;&#27861;**&#10;&#10;**XSS&#20351;&#29992;script&#23646;&#24615;**&#10;&#10;XSS&#25915;&#20987;&#21487;&#33021;&#19981;&#20351;&#29992; ```&#60;script&#62;&#60;/script&#62;``` &#26631;&#31614;&#36827;&#34892;&#12290;&#20854;&#20182;&#26631;&#31614;&#20063;&#21487;&#20197;&#20570;&#30456;&#21516;&#30340;&#20107;&#24773;&#65292;&#27604;&#22914;&#65306;&#10;&#10;    &#60;body onload=alert(&#39;test1&#39;)&#62;&#10;&#10;&#25110;&#32773;&#20854;&#20182;&#23646;&#24615;&#20687;&#65306; ```onmouseover, onerror``` &#10;&#10;```onmouseover</span><br></pre></td></tr></table></figure></p>
+<p>另外，你在所有支持HTTP TRACE的web服务器上关闭它是很重要的。攻击者能够通过javascript盗取cookie数据，尽管在客户端当<strong>document.cookie</strong>被禁用或不支持的时候。攻击在一个用户发表一段恶意脚本到论坛的时候被挂起，当另一个用户点击这个连接，一个从服务器收集用户cookie信息的异步HTTP 跟踪调用就被触发了，然后将它发送到另一个恶意服务器去收集cookie信息，因此攻击者能够进行session劫持攻击。这个通过在web服务器上移除HTTP TRACE很容易减少攻击。</p>
+<p>OWASP的ESAPI项目已经产生了一套多种语言的可重复使用的安全组件，包括校验和转义程序以防止参数被篡改和XSS注入攻击。此外，OWASP的WebGoat培训项目应用有跨站脚本和数据编码的课程。</p>
+<p><strong>XSS语法</strong></p>
+<p><strong>XSS使用script属性</strong></p>
+<p>XSS攻击可能不使用 <figure class="highlight"><figcaption><span>标签进行。其他标签也可以做相同的事情，比如：</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;    &#60;body onload=alert(&#39;test1&#39;)&#62;&#10;&#10;&#25110;&#32773;&#20854;&#20182;&#23646;&#24615;&#20687;&#65306; ```onmouseover, onerror``` &#10;&#10;```onmouseover</span><br></pre></td></tr></table></figure></p>
 <pre><code>&lt;<span class="tag">b</span> onmouseover=<span class="function"><span class="title">alert</span><span class="params">(<span class="string">'Wufff!'</span>)</span></span>&gt;click me!&lt;/b&gt;
 </code></pre><p><code>onerror</code></p>
 <pre><code><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">"http://url.to.file.which/not.exist"</span> <span class="attribute">onerror</span>=<span class="value">alert(document.cookie);</span>&gt;</span>
@@ -142,7 +146,7 @@ Employee ID: </span><span class="vbscript">&lt;%= eid %&gt;</span><span class="x
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigi3bk3d00073gqw1a5rxalm" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigi3e88i0007o0qwgd162qy9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
