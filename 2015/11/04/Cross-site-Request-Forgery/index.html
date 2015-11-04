@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Cross-site Request Forgery | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述跨站请求伪造（CSRF）是一类强制用户在他们已经认证过的web应用上执行他们不想执行的行为的攻击。CSRF攻击专门针对状态改变的请求，而并不窃取数据，因为攻击者无法看到伪造请求的响应。在一点社会工程学（比如通过电子邮件或聊天会话发送一个链接），攻击者可能诱骗web应用程序的用户执行攻击者提供的行为。如果受害者不是普通用户，成功的CSRF攻击能强制用户执行状态改变的请求，像转移资金，改变他们的邮">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cross-site Request Forgery">
+<meta property="og:url" content="http://yoursite.com/2015/11/04/Cross-site-Request-Forgery/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述跨站请求伪造（CSRF）是一类强制用户在他们已经认证过的web应用上执行他们不想执行的行为的攻击。CSRF攻击专门针对状态改变的请求，而并不窃取数据，因为攻击者无法看到伪造请求的响应。在一点社会工程学（比如通过电子邮件或聊天会话发送一个链接），攻击者可能诱骗web应用程序的用户执行攻击者提供的行为。如果受害者不是普通用户，成功的CSRF攻击能强制用户执行状态改变的请求，像转移资金，改变他们的邮">
+<meta property="og:updated_time" content="2015-11-04T14:57:53.071Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cross-site Request Forgery">
+<meta name="twitter:description" content="概述跨站请求伪造（CSRF）是一类强制用户在他们已经认证过的web应用上执行他们不想执行的行为的攻击。CSRF攻击专门针对状态改变的请求，而并不窃取数据，因为攻击者无法看到伪造请求的响应。在一点社会工程学（比如通过电子邮件或聊天会话发送一个链接），攻击者可能诱骗web应用程序的用户执行攻击者提供的行为。如果受害者不是普通用户，成功的CSRF攻击能强制用户执行状态改变的请求，像转移资金，改变他们的邮">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Cross-site-Request-Forgery" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/11/04/Cross-site-Request-Forgery/" class="article-date">
+  <time datetime="2015-11-04T14:57:13.000Z" itemprop="datePublished">2015-11-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Cross-site Request Forgery
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述">概述</h2><p>跨站请求伪造（CSRF）是一类强制用户在他们已经认证过的web应用上执行他们不想执行的行为的攻击。CSRF攻击专门针对状态改变的请求，而并不窃取数据，因为攻击者无法看到伪造请求的响应。在一点社会工程学（比如通过电子邮件或聊天会话发送一个链接），攻击者可能诱骗web应用程序的用户执行攻击者提供的行为。如果受害者不是普通用户，成功的CSRF攻击能强制用户执行状态改变的请求，像转移资金，改变他们的邮件地址，等等。如果受害者是管理员账户，CSRF能危害到整个web应用。</p>
+<h2 id="相关的安全文章">相关的安全文章</h2><ul>
+<li><p>如何审计CSRF漏洞代码</p>
+<p>  <a href="https://www.owasp.org/index.php/Reviewing_code_for_Cross-Site_Request_Forgery_issues" target="_blank" rel="external">review code for CSRF vulnerabilities</a></p>
+</li>
+<li><p>如何测试CSRF漏洞</p>
+<p>  <a href="https://www.owasp.org/index.php/Testing_for_CSRF_(OTG-SESS-005" target="_blank" rel="external">test for CSRF vulnerabilities</a>)</p>
+</li>
+<li><p>如何防止CSRF漏洞</p>
+<p>  <a href="https://www.owasp.org/index.php/CSRF_Prevention_Cheat_Sheet" target="_blank" rel="external">CSRF Prevention Cheat Sheet</a></p>
+</li>
+</ul>
+<h2 id="描述">描述</h2><p>CSRF攻击诱骗受害者去提交一个恶意的请求。它继承了受害者的身份和权限来执行一个受害者不需要的功能。大多数的网站，浏览器需要自动包含任何认证信息去和网站连接，就像用户的session会话，IP地址，windows域认证，等等。所以，如果用户目前已经取得网站认证，网站就没有方法去识别受害者发送来的伪造的请求和合法的请求了。</p>
+<p>CSRF攻击目标上能造成服务器状态改变的实用功能，如改变受害者邮件地址或密码，或者购买一些东西。强制受害者接受对攻击者无益的数据，因为攻击者无法收到响应，而受害者能收到。因此，CSRF攻击目标状态变化的请求。</p>
+<p>有时候在易受攻击的网站他自己也可能存储CSRF攻击，这类漏洞被称作<strong>存储CSRF漏洞</strong>。这能通过在某点简单的存储IMG或者IFRAME标签，或者通过更复杂的跨站脚本攻击完成。如果攻击能够在网站存储CSRF攻击，那么攻击的严重性就被放大了。特别的，可能性增加是由于相比互联网上一些随机的页面，受害者更可能看到包含攻击的页面。同样由于受害者一定是已经认证过网站了的所以可能性同样增加了。</p>
+<h3 id="同义词">同义词</h3><p>CSRF攻击也被称作很多其他名字，包括XSRF，Sea Surf，Session Riding，Cross-Site Reference Forgery，和Hostile Linking。微软在他们的威胁模型程序中把这类攻击作为One-Click攻击，并且在他们的在线文档中多处提到。</p>
+<h3 id="不起作用的防御措施">不起作用的防御措施</h3><p>使用加密cookie</p>
+<pre><code>记住所有的cookie,甚至加密的那个，将在每次请求的时候被提交。
+不管最终用户是否是被诱骗提交的请求，所有认证令牌将被提交。
+此外，会话标识被应用程序容器简单的使用来关联特定会话对象。
+这些会话标识不会去证实终端用户打算提交的请求。
+</code></pre><p>仅仅接收POST请求</p>
+<pre><code>应用程序能够被开发成仅仅接收执行业务逻辑的<span class="keyword">POST</span>请求。
+一个错觉是因为攻击者无法构造恶意的<span class="keyword">POST</span>请求，所以CSRF攻击就不
+能被执行。不幸的，这个逻辑是不正确的。这里有大量方法让攻击者能
+诱骗受害者去提交一个伪造请求，就像简单的从攻击者主机的网站隐藏
+所有域。这个表格将会javascript被自动的触发或者被那些认为表格
+没影响的受害者触发。
+</code></pre><h2 id="实例">实例</h2><h3 id="攻击如何工作的">攻击如何工作的</h3><p>有多种让终端用户被诱骗载入或提交信息到web应用程序的方式。为了执行攻击，我们必须理解如何生成可用的恶意代码请求让我们的受害者执行。让我们考虑如下例子：Alice希望通过bank.com的易受CSRF攻击的web程序转100美元给Bob。一个叫Maria的攻击者，想诱骗Alic把转转到他这里。攻击由厦门步骤组成：</p>
+<pre><code><span class="number">1.</span> 创建漏洞利用URL或脚本
+<span class="number">2.</span> 通过社会工程学引诱Alice去执行这个动作
+</code></pre><h3 id="GET方案">GET方案</h3><p>如果应用被设计为主要使用GET请求传递参数和执行动作，转钱的操作可能会被换成一个像下面的请求：</p>
+<pre><code><span class="constant">GET </span><span class="symbol">http:</span>/<span class="regexp">/bank.com/transfer</span>.<span class="keyword">do</span>?acct=<span class="constant">BOB&amp;</span>amount=<span class="number">100</span> <span class="constant">HTTP/</span><span class="number">1.1</span>
+</code></pre><p>Maria现在决定利用这个web应用漏洞，使Alice成为他的受害者。Maria首先构造了可以从Alice的账户转到她的账户10000美金的如下URL。她将原来的URL替换受益人名称为自己的名字，并同时提高了转账金额：</p>
+<pre><code><span class="symbol">http:</span>/<span class="regexp">/bank.com/transfer</span>.<span class="keyword">do</span>?acct=<span class="constant">MARIA&amp;</span>amount=<span class="number">100000</span>
+</code></pre><p>当Alice登录银行应用的时候，利用社会工程学攻击引诱她载入这个URL。经常有下面手段可以完成：</p>
+<ul>
+<li>发送含有HTML内容的邮件</li>
+<li>计划一个利用URL或者脚本在页面上，当受害者在线上银行操作时候容易被访问到。</li>
+</ul>
+<p>攻击URL能够被掩饰成普通的链接，促使攻击者去点击它：</p>
+<pre><code><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://bank.com/transfer.do?acct=MARIA&amp;amount=100000"</span>&gt;</span>View my Pictures!<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+</code></pre><p>或者作为假的图片</p>
+<pre><code>&lt;<span class="tag">img</span> src=<span class="string">"http://bank.com/transfer.do?acct=MARIA&amp;amount=100000"</span> <span class="attribute">width</span>=<span class="string">"0"</span> <span class="attribute">height</span>=<span class="string">"0"</span> <span class="attribute">border</span>=<span class="string">"0"</span>&gt;
+</code></pre><p>如果这个图片标签被包括在电子邮件中，Alice将不能看出任何东西，然而，浏览器将仍然提交请求给bank.com，没有任何可见的转账已发生的迹象。<br>一个生活中使用GET方式的真正的CSRF实例是2008年被大规模使用下载恶意软件的<a href="http://xs-sniper.com/blog/2008/04/21/csrf-pwns-your-box/" target="_blank" rel="external">uTorrent exploit</a></p>
+<h3 id="POST方案">POST方案</h3><p>GET和POST攻击仅仅不同的是攻击如何被受害者执行的。让我们假设银行现在使用POST请求，并且易受攻击的请求看起来像这样：</p>
+<pre><code><span class="request">POST <span class="string">http://bank.com/transfer.do</span> HTTP/1.1</span>
+
+<span class="cpp">acct=BOB&amp;amount=<span class="number">100</span></span>
+</code></pre><p>这样的请求不能被标准的A或者IMG标签传递，但是能够使用FORM标签传递：</p>
+<pre><code>&lt;form action=<span class="string">"http://bank.com/transfer.do"</span> method=<span class="string">"<span class="keyword">POST</span>"</span>&gt;
+&lt;input type=<span class="string">"hidden"</span> name=<span class="string">"acct"</span> value=<span class="string">"MARIA"</span>/&gt;
+&lt;input type=<span class="string">"hidden"</span> name=<span class="string">"amount"</span> value=<span class="string">"100000"</span>/&gt;
+&lt;input type=<span class="string">"submit"</span> value=<span class="string">"View my pictures"</span>/&gt;
+&lt;/form&gt;
+</code></pre><p>这个表单将需要用户点击提交按钮，但是这个也能使用javascript自动执行：</p>
+<pre><code>&lt;<span class="tag">body</span> onload=<span class="string">"document.forms[0].submit()"</span>&gt;
+&lt;<span class="tag">form</span>...
+</code></pre><h3 id="其他HTTP方法">其他HTTP方法</h3><p>现代web应用API频繁的使用其他的HTTP方法，如PUT或者DELETE。让我们假设容易受攻击的银行使用PUT，带着JSON块作为参数：</p>
+<pre><code><span class="request">PUT <span class="string">http://bank.com/transfer.do</span> HTTP/1.1</span>
+
+<span class="json">{ "<span class="attribute">acct</span>":<span class="value"><span class="string">"BOB"</span></span>, "<span class="attribute">amount</span>":<span class="value"><span class="number">100</span> </span>}</span>
+</code></pre><p>这个请求能够被javascript执行嵌入一个利用页面：</p>
+<pre><code><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">
+<span class="function"><span class="keyword">function</span> <span class="title">put</span>(<span class="params"></span>) </span>{
+    <span class="keyword">var</span> x = <span class="keyword">new</span> XMLHttpRequest();
+    x.open(<span class="string">"PUT"</span>,<span class="string">"http://bank.com/transfer.do"</span>,<span class="literal">true</span>);
+    x.setRequestHeader(<span class="string">"Content-Type"</span>, <span class="string">"application/json"</span>); 
+    x.send(<span class="built_in">JSON</span>.stringify({<span class="string">"acct"</span>:<span class="string">"BOB"</span>, <span class="string">"amount"</span>:<span class="number">100</span>})); 
+}
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="tag">&lt;<span class="title">body</span> <span class="attribute">onload</span>=<span class="value">"put()"</span>&gt;</span>
+</code></pre><p>幸运的，受同源策略的限制，这个请求在现代浏览器里面将不会被执行。这个限制默认开启的，除非目标web网站通过如下的请求头明确的开启了从攻击者（任何人）的源跨域请求：</p>
+<pre><code><span class="attribute">Access-Control-Allow-Origin</span>: <span class="string">*</span>
+</code></pre><h2 id="相关攻击">相关攻击</h2><ul>
+<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS" target="_blank" rel="external">Cross-site Scripting (XSS)</a>)</li>
+<li><a href="https://www.owasp.org/index.php/Cross_Site_History_Manipulation_(XSHM" target="_blank" rel="external">Cross Site History Manipulation (XSHM)</a>)</li>
+</ul>
+<h2 id="相关控件">相关控件</h2><ul>
+<li>除了标准会话，为每一个请求添加一个临时的URL，也被称作是<strong>form key</strong>，很多框架（比如Drupal.org）已经有或者开始包含这种保护内建的form保护了，所以程序员不用手工写代码去保护了。</li>
+<li>给所有的form添加一个hash（会话id，功能名称，服务端秘钥）</li>
+</ul>
+<h2 id="参考">参考</h2><ul>
+<li><a href="https://www.owasp.org/index.php/Testing_for_CSRF_(OWASP-SM-005" target="_blank" rel="external">Testing for CSRF</a>)</li>
+<li><a href="https://www.owasp.org/index.php/Category:OWASP_CSRFTester_Project" target="_blank" rel="external">OWASP CSRF Tester</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/11/04/Cross-site-Request-Forgery/" data-id="cigkxiljq000ah0qw4ry17tig" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSRF/">CSRF</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/11/02/Blind-SQL-Injection/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Blind SQL Injection</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blind-SQL-Injection/">Blind SQL Injection</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSRF/">CSRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-injection/">sql injection</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Blind-SQL-Injection/" style="font-size: 10px;">Blind SQL Injection</a> <a href="/tags/CSRF/" style="font-size: 10px;">CSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/sql-injection/" style="font-size: 10px;">sql injection</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/11/04/Cross-site-Request-Forgery/">Cross-site Request Forgery</a>
+          </li>
+        
+          <li>
+            <a href="/2015/11/02/Blind-SQL-Injection/">Blind SQL Injection</a>
+          </li>
+        
+          <li>
+            <a href="/2015/11/01/Cross-site-Scripting/">Cross-site Scripting</a>
+          </li>
+        
+          <li>
+            <a href="/2015/10/25/SQL-injection/">SQL injection</a>
+          </li>
+        
+          <li>
+            <a href="/2015/10/25/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
